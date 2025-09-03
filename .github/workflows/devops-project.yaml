@@ -2,19 +2,16 @@ name: DevOpsProject CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -27,11 +24,12 @@ jobs:
           source .venv/bin/activate
           pip install --upgrade pip
           pip install -r app/requirements.txt
-          pip install pytest black ruff bandit pip-audit semgrep
+          pip install pytest black ruff bandit pip-audit semgrep httpx
 
       - name: Run linters and tests
         run: |
           source .venv/bin/activate
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
           ruff check app/
           black --check app/
           pytest -q
@@ -40,8 +38,7 @@ jobs:
           semgrep --config=auto
 
       - name: Build Docker image
-        run: |
-          docker build -t devops-project:latest .
+        run: docker build -t devops-project:latest .
 
       - name: Deploy to Kubernetes
         run: |
