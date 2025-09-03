@@ -32,10 +32,10 @@ jobs:
       - name: Run linters and tests
         run: |
           source .venv/bin/activate
-          ruff .
-          black --check .
+          ruff check app/
+          black --check app/
           pytest -q
-          bandit -r .
+          bandit -r app/
           pip-audit
           semgrep --config=auto
 
