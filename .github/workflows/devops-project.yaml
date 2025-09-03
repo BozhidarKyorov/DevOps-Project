@@ -26,16 +26,16 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r app/requirements.txt
           pip install pytest black ruff bandit pip-audit semgrep
 
       - name: Run linters and tests
         run: |
           source .venv/bin/activate
-          ruff .
-          black --check .
+          ruff check app/
+          black --check app/
           pytest -q
-          bandit -r .
+          bandit -r app/
           pip-audit
           semgrep --config=auto
 
