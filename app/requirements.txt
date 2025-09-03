@@ -1,0 +1,7 @@
+pytest
+ruff
+black
+bandit
+pip-audit
+semgrep
+httpx
