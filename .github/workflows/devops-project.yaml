@@ -40,7 +40,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t devops-project:latest .
 
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f deploy/kubernetes/deployment.yaml
-          kubectl apply -f deploy/kubernetes/service.yaml
+     # - name: Deploy to Kubernetes
+     #   run: |
+     #     kubectl apply -f deploy/kubernetes/deployment.yaml
+     #     kubectl apply -f deploy/kubernetes/service.yaml
