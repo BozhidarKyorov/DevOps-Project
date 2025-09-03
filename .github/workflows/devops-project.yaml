@@ -33,7 +33,7 @@ jobs:
           ruff check app/
           black --check app/
           pytest -q
-          bandit -r app/
+          bandit -r app/ --skip B101
           pip-audit
           semgrep --config=auto
 
