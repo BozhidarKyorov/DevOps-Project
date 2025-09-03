@@ -5,3 +5,5 @@ bandit
 pip-audit
 semgrep
 httpx
+uvicorn
+fastapi

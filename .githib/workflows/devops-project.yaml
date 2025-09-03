@@ -1,0 +1,49 @@
+name: DevOpsProject CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest black ruff bandit pip-audit semgrep
+
+      - name: Run linters and tests
+        run: |
+          source .venv/bin/activate
+          ruff .
+          black --check .
+          pytest -q
+          bandit -r .
+          pip-audit
+          semgrep --config=auto
+
+      - name: Build Docker image
+        run: |
+          docker build -t devops-project:latest .
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deploy/kubernetes/deployment.yaml
+          kubectl apply -f deploy/kubernetes/service.yaml

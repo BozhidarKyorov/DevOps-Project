@@ -1,0 +1,9 @@
+replicaCount: 2
+image:
+  repository: DevOps-Project
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
+containerPort: 8080
