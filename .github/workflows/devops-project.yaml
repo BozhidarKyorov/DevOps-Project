@@ -72,7 +72,7 @@ jobs:
 
   test-container:
     runs-on: ubuntu-latest
-    needs: [build, setup-docker-image]
+    needs: build
     steps:
       - uses: actions/checkout@v3
 
