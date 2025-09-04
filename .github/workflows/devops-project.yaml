@@ -35,6 +35,31 @@ jobs:
           name: docker-image
           path: image.tar
 
+  db-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Apply migrations
+        run: |
+          psql "postgresql://testuser:testpass@localhost:5432/testdb" -f db/migrations/create_table_users.sql
+          psql "postgresql://testuser:testpass@localhost:5432/testdb" -f db/migrations/add_users_1.sql
+
   # --- Test Job ---
   test:
     runs-on: ubuntu-latest
