@@ -6,7 +6,6 @@ on:
   pull_request:
 
 jobs:
-  # Example: linters still run in parallel
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +14,6 @@ jobs:
       - run: ruff check .
       - run: black --check .
 
-  # --- Build Job ---
   build:
     runs-on: ubuntu-latest
     needs: lint
@@ -37,7 +35,7 @@ jobs:
 
   db-test:
     runs-on: ubuntu-latest
-    needs: build
+    needs: lint
     services:
       postgres:
         image: postgres:15
@@ -76,7 +74,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # Build, load, run container, healthcheck, etc.
       - uses: actions/checkout@v3
 
       - name: Download built image
@@ -88,21 +85,20 @@ jobs:
       - name: Load Docker image
         run: docker load -i image.tar
 
-  # --- Test Job ---
   test-container:
     runs-on: ubuntu-latest
     needs: [build, setup-docker-image]
     steps:
-      - uses: actions/checkout@v3
+      # - uses: actions/checkout@v3
 
-      - name: Download built image
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-image
-          path: .
+      # - name: Download built image
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: docker-image
+      #     path: .
 
-      - name: Load Docker image
-        run: docker load -i image.tar
+      # - name: Load Docker image
+      #   run: docker load -i image.tar
 
       - name: Run container
         run: docker run -d -p 8080:8080 --name devops-test devops-project:${{ github.sha }}
@@ -139,7 +135,6 @@ jobs:
       - name: Run pytest inside container
         run: docker exec devops-test env PYTHONPATH=/app SKIP_DB_TESTS=1 pytest -q
 
-  # --- Deploy Job ---
   deploy:
     runs-on: ubuntu-latest
     needs: [test-container, db-test]       
@@ -166,6 +161,7 @@ jobs:
           docker tag devops-project:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/devops-project:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/devops-project:latest
 
+  # Could not make them work and dont have subscription for azure
   # k8s-kind:
   #   runs-on: ubuntu-latest
   #   needs: deploy
@@ -179,7 +175,7 @@ jobs:
   #         cluster_name: devops-cluster
   #         wait: 60s
 
-  #     # ✅ Deploy your manifests into Kind
+  #     # Deploy your manifests into Kind
   #     - name: Deploy to Kind
   #       run: |
   #         kubectl apply -f deploy/kubernetes/deployment.yaml
