@@ -54,6 +54,9 @@ jobs:
       - name: Run container
         run: docker run -d -p 8080:8080 --name devops-test devops-project:${{ github.sha }}
 
+      - name: Wait for app to start
+        run: sleep 5
+      
       - name: Check container status
         run: docker ps -a
 
