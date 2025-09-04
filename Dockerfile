@@ -17,7 +17,7 @@ COPY --from=builder /wheels /wheels
 COPY app/requirements.txt .
 
 # Install dependencies from wheels
-RUN pip install --no-index --find-links=/wheels -r requirements.txt db-requirements.txt
+RUN pip install --no-index --find-links=/wheels -r requirements.txt
 
 # Copy application code
 COPY app/ .
