@@ -109,6 +109,23 @@ jobs:
 
       - name: Wait for app to start
         run: sleep 15
+
+      - name: Wait for container to be ready
+        run: |
+          retries=30
+          count=0
+          url="http://localhost:8080/healthz"
+          echo "Waiting for container to be ready..."
+          until curl --silent --fail $url >/dev/null 2>&1; do
+            count=$((count + 1))
+            if [ $count -ge $retries ]; then
+              echo "Container did not become ready in time"
+              docker logs devops-test
+              exit 1
+            fi
+            sleep 2
+          done
+          echo "Container is ready!"
       
       - name: Check container status
         run: docker ps -a
@@ -125,7 +142,7 @@ jobs:
   # --- Deploy Job ---
   deploy:
     runs-on: ubuntu-latest
-    needs: test-container     
+    needs: [test-container, db-test]       
     steps:
       - uses: actions/checkout@v3
 
