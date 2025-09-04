@@ -7,4 +7,3 @@ semgrep
 httpx
 uvicorn
 fastapi
-psycopg2-binary

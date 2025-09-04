@@ -37,6 +37,7 @@ jobs:
 
   db-test:
     runs-on: ubuntu-latest
+    needs: build
     services:
       postgres:
         image: postgres:15
@@ -53,18 +54,29 @@ jobs:
           --health-retries=5
     steps:
       - uses: actions/checkout@v3
+
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      
       - name: Apply migrations
         run: |
           psql "postgresql://testuser:testpass@localhost:5432/testdb" -f db/migrations/create_table_users.sql
           psql "postgresql://testuser:testpass@localhost:5432/testdb" -f db/migrations/add_users_1.sql
 
-  # --- Test Job ---
-  test:
+      - name: Install Python dependencies
+        run: pip install -r app/db-requirements.txt
+
+      - name: Run DB tests
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+        run: pytest app/tests/test_db.py
+
+
+  setup-docker-image:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      # Build, load, run container, healthcheck, etc.
       - uses: actions/checkout@v3
 
       - name: Download built image
@@ -75,6 +87,22 @@ jobs:
 
       - name: Load Docker image
         run: docker load -i image.tar
+
+  # --- Test Job ---
+  test-container:
+    runs-on: ubuntu-latest
+    needs: build, setup
+    steps:
+      - uses: actions/checkout@v3
+
+      # - name: Download built image
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: docker-image
+      #     path: .
+
+      # - name: Load Docker image
+      #   run: docker load -i image.tar
 
       - name: Run container
         run: docker run -d -p 8080:8080 --name devops-test devops-project:${{ github.sha }}
@@ -87,7 +115,6 @@ jobs:
 
       - name: Show container logs
         run: docker logs devops-test
-
 
       - name: Run healthcheck test
         run: curl --retry 5 --retry-connrefused http://localhost:8080/healthz
