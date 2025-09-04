@@ -4,9 +4,8 @@ import os
 
 pytestmark = pytest.mark.skipif(
     os.getenv("SKIP_DB_TESTS") == "1",
-    reason="Skipping DB tests in container, already tested in db-test job"
+    reason="Skipping DB tests in container, already tested in db-test job",
 )
-
 
 
 DB_URL = os.getenv(
