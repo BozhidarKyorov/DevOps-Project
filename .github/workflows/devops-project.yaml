@@ -68,7 +68,7 @@ jobs:
         run: curl --retry 5 --retry-connrefused http://localhost:8080/healthz
 
       - name: Run pytest inside container
-        run: docker exec devops-test pytest -q
+        run: docker exec devops-test PYTHONPATH=/app pytest -q
 
   # --- Deploy Job ---
   deploy:
