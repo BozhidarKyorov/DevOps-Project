@@ -98,22 +98,22 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/devops-project:latest
 
   k8s-deploy:
-  runs-on: ubuntu-latest
-  needs: deploy
-  steps:
-    - uses: actions/checkout@v3
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Set AKS context
-      uses: azure/k8s-set-context@v2
-      with:
-        kubeconfig: ${{ secrets.AZURE_KUBECONFIG }}
+      - name: Set AKS context
+        uses: azure/k8s-set-context@v2
+        with:
+          kubeconfig: ${{ secrets.AZURE_KUBECONFIG }}
 
-    - name: Deploy to Kubernetes
-      uses: azure/k8s-deploy@v4
-      with:
-        manifests: |
-          deploy/kubernetes/deployment.yaml
-          deploy/kubernetes/service.yaml
-        images: |
-          ${{ secrets.DOCKER_USERNAME }}/devops-project:latest
-        namespace: default
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v4
+        with:
+          manifests: |
+            deploy/kubernetes/deployment.yaml
+            deploy/kubernetes/service.yaml
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/devops-project:latest
+          namespace: default
