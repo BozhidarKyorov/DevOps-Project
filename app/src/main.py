@@ -14,6 +14,7 @@ def healthz():
 def root():
     return {"message": "Hello, CI/CD!"}
 
+
 @app.get("/users")
 def users():
     return {"users": get_users()}
