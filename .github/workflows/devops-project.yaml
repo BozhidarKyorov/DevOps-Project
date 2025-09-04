@@ -15,7 +15,6 @@ jobs:
       - run: ruff check .
       - run: black --check .
 
-
   # --- Build Job ---
   build:
     runs-on: ubuntu-latest
