@@ -54,6 +54,13 @@ jobs:
       - name: Run container
         run: docker run -d -p 8080:8080 --name devops-test devops-project:${{ github.sha }}
 
+      - name: Check container status
+        run: docker ps -a
+
+      - name: Show container logs
+        run: docker logs devops-test
+
+
       - name: Run healthcheck test
         run: curl --retry 5 --retry-connrefused http://localhost:8080/healthz
 
