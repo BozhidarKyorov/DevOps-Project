@@ -123,7 +123,7 @@ jobs:
       # Run a test request against your service
       - name: Test service
         run: |
-          kubectl port-forward svc/devops-service 8080:8080 &
+          kubectl port-forward svc/devops-project 8080:80 &
           sleep 5
           curl --retry 5 --retry-connrefused http://localhost:8080/healthz
 
