@@ -2,9 +2,9 @@ import psycopg2
 import os
 
 DB_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://testuser:testpass@localhost:5432/testdb"
+    "DATABASE_URL", "postgresql://testuser:testpass@localhost:5432/testdb"
 )
+
 
 def test_users_table_has_rows():
     conn = psycopg2.connect(DB_URL)
