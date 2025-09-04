@@ -2,6 +2,8 @@
 FROM python:3.12-slim AS builder
 WORKDIR /app
 
+ENV PYTHONPATH=/app
+
 # Copy dependencies and build wheels
 COPY app/requirements.txt .
 RUN pip install --upgrade pip && pip wheel --wheel-dir /wheels -r requirements.txt
