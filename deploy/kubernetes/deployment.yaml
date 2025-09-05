@@ -11,7 +11,7 @@ spec:
       app: devops-project
   template:
     metadata:
-      labels:                 # ✅ only labels here
+      labels:             
         app: devops-project
     spec:
       containers:
